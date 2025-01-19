@@ -1,5 +1,5 @@
 services:
-  stats-server:
+  stats:
     ports:
       - "9090:9090"
 
