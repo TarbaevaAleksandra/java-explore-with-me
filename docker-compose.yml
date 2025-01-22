@@ -7,6 +7,9 @@ services:
     image: postgres:16.1
 
   ewm-service:
+    build: ewm-service
+    image: ewm-service-image
+    container_name: ewm-service-container
     ports:
       - "8080:8080"
 
