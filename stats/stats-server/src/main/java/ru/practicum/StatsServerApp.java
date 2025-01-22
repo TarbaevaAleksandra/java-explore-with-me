@@ -2,12 +2,14 @@ package ru.practicum;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-public class StatsApplication
+@ComponentScan(basePackages = {"ru.practicum"})
+public class StatsServerApp
 {
     public static void main( String[] args )
     {
-        SpringApplication.run(StatsApplication.class, args);
+        SpringApplication.run(StatsServerApp.class, args);
     }
 }
