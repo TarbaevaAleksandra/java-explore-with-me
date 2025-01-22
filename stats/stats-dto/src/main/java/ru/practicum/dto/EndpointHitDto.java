@@ -6,7 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import java.time.LocalDateTime;
 
-@Getter@Setter
+@Getter
+@Setter
 @RequiredArgsConstructor
 public class EndpointHitDto {
     private String app;
