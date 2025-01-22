@@ -2,12 +2,17 @@ package ru.practicum;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Data;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-
+import ru.practicum.dto.EndpointHitDto;
+import ru.practicum.dto.ViewStatsDto;
+import ru.practicum.mapper.EndpointHitMapper;
+import ru.practicum.mapper.ViewStatsMapper;
+import ru.practicum.model.EndpointHit;
+import ru.practicum.model.ViewStats;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -15,18 +20,26 @@ import java.util.List;
 @Getter
 @Setter
 public class StatsService {
-    private final StatsRepository statsRepository;
     private final EndpointHitRepository endpointHitRepository;
 
     @Transactional
-    public EndpointHit createHit(EndpointHit hit) {
-        return endpointHitRepository.save(hit);
+    public EndpointHitDto createHit(EndpointHitDto hit) {
+        EndpointHit newEndpointHit = EndpointHitMapper.toModelFromDto(hit);
+        return EndpointHitMapper.fromModelToDto(endpointHitRepository.save(newEndpointHit));
     }
 
     @Transactional(readOnly = true)
-    public List<Stats> getAll() {
-        return statsRepository.findAll();
+    public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        if (uris == null)
+            uris = List.of("0");
+        List<ViewStats> newStats;
+        if (unique)
+            newStats = endpointHitRepository.getStatsWithUniqueIp(uris,start,end);
+        else
+            newStats = endpointHitRepository.getStats(uris,start,end);
+        return newStats.stream()
+                .map(ViewStatsMapper::fromModelToDto)
+                .toList();
     }
-
-
 }

@@ -10,6 +10,9 @@ services:
     image: postgres:16.1
 
   stats:
+    build: stats
+    image: stats-image
+    container_name: stats-container
     ports:
       - "9090:9090"
 

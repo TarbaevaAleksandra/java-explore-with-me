@@ -7,11 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
+import ru.practicum.dto.EndpointHitDto;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class StatsClient extends BaseClient {
-    private static final String API_PREFIX = "";
-
     @Autowired
     public StatsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(
@@ -22,11 +25,17 @@ public class StatsClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> createHit(EndpointHit hit) {
+    public ResponseEntity<Object> createHit(EndpointHitDto hit) {
         return post("/hit", hit);
     }
 
-    public ResponseEntity<Object> getAll() {
-        return get("/stats");
+    public ResponseEntity<Object> getAll(String start, String end, List<String> uris, Boolean unique) {
+        Map<String, Object> parameters = Map.of(
+                "start", start,
+                "end", end,
+                "uris", uris,
+                "unique", unique
+        );
+        return get("/stats", null, parameters);
     }
 }

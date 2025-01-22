@@ -1,4 +1,4 @@
-package ru.practicum;
+package ru.practicum.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
@@ -18,12 +18,19 @@ public class EndpointHit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(name = "app")
-    private String app = "Alex";
+    private String app;
     @Column(name = "uri")
-    private String uri = "Alex";
+    private String uri;
     @Column(name = "ip")
-    private String ip = "Alex";
+    private String ip;
     @Column(name = "timestamp")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime timestamp = LocalDateTime.now();
+    private LocalDateTime timestamp;
+
+    public EndpointHit(String app,  String uri, String ip, LocalDateTime timestamp) {
+        this.app = app;
+        this.uri = uri;
+        this.ip = ip;
+        this.timestamp = timestamp;
+    }
 }
