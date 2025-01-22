@@ -4,35 +4,17 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-/**
- * Unit test for simple StatsServerApp.
- */
-public class StatsServerAppTest
-    extends TestCase
-{
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public StatsServerAppTest(String testName )
-    {
+public class StatsServerAppTest extends TestCase {
+
+    public StatsServerAppTest(String testName ) {
         super( testName );
     }
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
+    public static Test suite() {
         return new TestSuite( StatsServerAppTest.class );
     }
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
-    {
+    public void testApp() {
         assertTrue( true );
     }
 }
