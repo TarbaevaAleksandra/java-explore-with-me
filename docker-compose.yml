@@ -6,7 +6,7 @@ services:
     depends_on:
       - stats-db
     ports:
-      - "9090:9090"
+      - "9090:5774"
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/postgres
       - SPRING_DATASOURCE_USERNAME=postgres
