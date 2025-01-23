@@ -8,7 +8,7 @@ services:
     ports:
       - "9090:5774"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5432/postgres
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://stats-db:5433/postgres
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=1403
       - SPRING_DRIVER_CLASS_NAME=org.postgresql.Driver
@@ -17,7 +17,7 @@ services:
     image: postgres:16.1
     container_name: stats-db-container
     ports:
-      - "6542:5432"
+      - "5433:5432"
     environment:
       - POSTGRES_PASSWORD=1403
       - POSTGRES_USER=postgres
