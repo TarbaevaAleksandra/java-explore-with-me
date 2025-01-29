@@ -17,13 +17,17 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.category.Category;
 import ru.practicum.category.CategoryRepository;
 import ru.practicum.dto.*;
+import ru.practicum.users.mapper.RequestMapper;
+import ru.practicum.users.model.Request;
 import ru.practicum.users.model.User;
+import ru.practicum.users.repository.RequestRepository;
 import ru.practicum.users.repository.UsersRepository;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Service
 @Getter
@@ -34,6 +38,7 @@ public class EventSevice {
     private final UsersRepository usersRepository;
     private final CategoryRepository categoryRepository;
     private final EventViewsComponent eventViewsComponent;
+    private final RequestRepository requestRepository;
 
     // Private: События
     @Transactional(readOnly = true)
@@ -125,6 +130,73 @@ public class EventSevice {
         Event event = eventRepository.save(oldEvent);
         Map<Long, Long> views = eventViewsComponent.getViewsOfEvents(List.of(event.getId()));
         return EventMapper.fromModelToFullDto(event, views);
+    }
+
+    @Transactional(readOnly = true)
+    List<ParticipationRequestDto> findRequestsOnEvent(Long userId, Long eventId){
+        User user = usersRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Пользователь не найден"));
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Событие не найдено"));
+        List<Request> eventRequests = requestRepository.findAllByEventId(eventId);
+        return eventRequests.stream().map(RequestMapper::fromModelToDto).toList();
+    };
+
+    @Transactional
+    public EventRequestStatusUpdateResult updateStatusOfRequest(Long userId, Long eventId,
+                                                                    EventRequestStatusUpdateRequest statusUpdate) {
+        int requestsCount = statusUpdate.getRequestIds().size();
+        User user = usersRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Пользователь не найден"));
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Событие не найдено"));
+        List<Request> confirmed = new ArrayList<>();
+        List<Request> rejected = new ArrayList<>();
+        String status = statusUpdate.getStatus();
+        List<Request> requests = requestRepository.findByIdIn(statusUpdate.getRequestIds());
+
+        if (!Objects.equals(userId, event.getInitiator().getId())) {
+            //throw new InvalidRequestException("У пользователя с id " + userId + " нет события с id " + eventId);
+        }
+        for (Request request : requests) {
+            if (!request.getStatus().equals("PENDING")) {
+                //throw new DataConflictException("Изменить статус можно только у ожидающей подтверждения заявки на участие");
+            }
+        }
+        switch (status) {
+            case "CONFIRMED":
+                if (event.getParticipantLimit() == 0 || !event.getRequestModeration()
+                        || event.getParticipantLimit() > event.getConfirmedRequests() + requestsCount) {
+                    requests.forEach(request -> request.setStatus("CONFIRMED"));
+                    event.setConfirmedRequests(event.getConfirmedRequests() + requestsCount);
+                    confirmed.addAll(requests);
+                } else if (event.getParticipantLimit() <= event.getConfirmedRequests()) {
+                    //throw new DataConflictException("Достигнут лимит заявок на участие в событии");
+                } else {
+                    for (Request request : requests) {
+                        if (event.getParticipantLimit() > event.getConfirmedRequests()) {
+                            request.setStatus("CONFIRMED");
+                            event.setConfirmedRequests(event.getConfirmedRequests() + 1);
+                            confirmed.add(request);
+                        } else {
+                            request.setStatus("REJECTED");
+                            rejected.add(request);
+                        }
+                    }
+                }
+                break;
+            case "REJECTED":
+                requests.forEach(request -> request.setStatus("REJECTED"));
+                rejected.addAll(requests);
+        }
+        eventRepository.save(event);
+        requestRepository.saveAll(requests);
+
+        EventRequestStatusUpdateResult result = new EventRequestStatusUpdateResult(
+                confirmed.stream().map(RequestMapper::fromModelToDto).toList(),
+                rejected.stream().map(RequestMapper::fromModelToDto).toList()
+        );
+        return result;
     }
 
     // Admin: События

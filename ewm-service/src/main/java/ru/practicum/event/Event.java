@@ -30,6 +30,8 @@ public class Event {
     @Column(name = "eventDate")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime eventDate;
+    @Column(name = "confirmed_requests")
+    private Integer confirmedRequests;
     @Column(name = "created_on")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdOn;

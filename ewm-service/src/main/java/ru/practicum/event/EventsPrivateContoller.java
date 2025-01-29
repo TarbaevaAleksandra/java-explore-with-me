@@ -50,13 +50,13 @@ public class EventsPrivateContoller {
     @GetMapping("/{eventId}/requests")
     public List<ParticipationRequestDto> findRequestsOfEvent(@PathVariable Long userId,
                                                              @PathVariable Long eventId) {
-        return List.of();
+        return eventSevice.findRequestsOnEvent(userId, eventId);
     }
 
     @PatchMapping("/{eventId}/requests")
     public EventRequestStatusUpdateResult updateRequestsOfEvent(@PathVariable Long userId,
                                                                 @PathVariable Long eventId,
                                                                 @Valid @RequestBody EventRequestStatusUpdateRequest updateRequest) {
-        return new EventRequestStatusUpdateResult();
+        return eventSevice.updateStatusOfRequest(userId,eventId,updateRequest);
     }
 }

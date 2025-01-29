@@ -16,6 +16,7 @@ create table if not exists events (
   annotation varchar(2000),
   category bigint references categories(id),
   created_on timestamp without time zone,
+  confirmed_requests int,
   description varchar(7000),
   eventDate timestamp without time zone,
   initiator bigint references users(id) on delete cascade,
