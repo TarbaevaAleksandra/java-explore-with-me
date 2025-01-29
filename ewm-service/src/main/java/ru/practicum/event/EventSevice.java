@@ -296,7 +296,6 @@ public class EventSevice {
             return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
         }
         );
-        
         List<Event> events = eventRepository.findAll(specification, pageable).getContent();
         List<Long> idEvents = events.stream().map((x) -> (x.getId())).toList();
         Map<Long, Long> views = eventViewsComponent.getViewsOfEvents(idEvents);
