@@ -21,7 +21,11 @@ public class CategoryService {
     @Transactional
     public CategoryDto saveCat(NewCategoryDto newCategoryDto) {
         Category newCat = CategoryMapper.toModelFromDto(newCategoryDto);
-        return CategoryMapper.fromModelToDto(catRepository.save(newCat));
+        try{
+            return CategoryMapper.fromModelToDto(catRepository.save(newCat));
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Категория не найдена");
+        }
     }
 
     @Transactional

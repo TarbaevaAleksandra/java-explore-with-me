@@ -1,4 +1,4 @@
-package ru.practicum.event;
+package ru.practicum.event.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -7,6 +7,8 @@ import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.*;
+import ru.practicum.event.EventSevice;
+
 import java.util.List;
 
 @RestController

@@ -1,5 +1,6 @@
 package ru.practicum.category;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +19,7 @@ public class CategoryAdminController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CategoryDto saveCat(@RequestBody NewCategoryDto newCategoryDto) {
+    public CategoryDto saveCat(@Valid @RequestBody NewCategoryDto newCategoryDto) {
         return categoryService.saveCat(newCategoryDto);
     }
 
@@ -31,7 +32,7 @@ public class CategoryAdminController {
     @PatchMapping("/{catId}")
     @ResponseStatus(HttpStatus.OK)
     public CategoryDto updateCat(@PathVariable Long catId,
-                            @RequestBody NewCategoryDto newCategoryDto) {
+                                 @Valid @RequestBody NewCategoryDto newCategoryDto) {
         return categoryService.updateCat(catId, newCategoryDto);
     }
 }

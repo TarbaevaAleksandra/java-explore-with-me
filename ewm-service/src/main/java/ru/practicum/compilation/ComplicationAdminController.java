@@ -1,5 +1,6 @@
 package ru.practicum.compilation;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,7 +20,7 @@ public class ComplicationAdminController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CompilationDto saveComplication(@RequestBody NewCompilationDto compilation) {
+    public CompilationDto saveComplication(@Valid @RequestBody NewCompilationDto compilation) {
         return compilationService.saveCompilation(compilation);
     }
 
@@ -32,7 +33,7 @@ public class ComplicationAdminController {
     @PatchMapping("/{compId}")
     @ResponseStatus(HttpStatus.OK)
     public CompilationDto updateComplication(@PathVariable Long compId,
-                                             @RequestBody UpdateCompilationRequest compilation) {
+                                             @Valid @RequestBody UpdateCompilationRequest compilation) {
         return compilationService.updateCompilation(compId,compilation);
     }
 }

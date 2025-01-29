@@ -5,6 +5,8 @@ import ru.practicum.category.CategoryMapper;
 import ru.practicum.dto.EventFullDto;
 import ru.practicum.dto.EventShortDto;
 import ru.practicum.dto.NewEventDto;
+import ru.practicum.event.model.Event;
+import ru.practicum.event.model.State;
 import ru.practicum.users.mapper.UserMapper;
 import ru.practicum.users.model.User;
 import java.time.LocalDateTime;

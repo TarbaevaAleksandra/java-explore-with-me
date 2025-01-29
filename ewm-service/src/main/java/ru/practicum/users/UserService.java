@@ -10,7 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.dto.NewUserRequest;
 import ru.practicum.dto.ParticipationRequestDto;
 import ru.practicum.dto.UserDto;
-import ru.practicum.event.Event;
+import ru.practicum.event.model.Event;
 import ru.practicum.event.EventRepository;
 import ru.practicum.users.mapper.RequestMapper;
 import ru.practicum.users.mapper.UserMapper;

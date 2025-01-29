@@ -3,7 +3,7 @@ package ru.practicum.compilation;
 import lombok.experimental.UtilityClass;
 import ru.practicum.dto.CompilationDto;
 import ru.practicum.dto.NewCompilationDto;
-import ru.practicum.event.Event;
+import ru.practicum.event.model.Event;
 import ru.practicum.event.EventMapper;
 import java.util.List;
 import java.util.Map;

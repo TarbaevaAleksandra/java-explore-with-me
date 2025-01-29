@@ -17,6 +17,8 @@ import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.category.Category;
 import ru.practicum.category.CategoryRepository;
 import ru.practicum.dto.*;
+import ru.practicum.event.model.Event;
+import ru.practicum.event.model.State;
 import ru.practicum.users.mapper.RequestMapper;
 import ru.practicum.users.model.Request;
 import ru.practicum.users.model.User;
@@ -133,7 +135,7 @@ public class EventSevice {
     }
 
     @Transactional(readOnly = true)
-    List<ParticipationRequestDto> findRequestsOnEvent(Long userId, Long eventId) {
+    public List<ParticipationRequestDto> findRequestsOnEvent(Long userId, Long eventId) {
         User user = usersRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Пользователь не найден"));
         Event event = eventRepository.findById(eventId)

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.dto.*;
-import ru.practicum.event.Event;
+import ru.practicum.event.model.Event;
 import ru.practicum.event.EventRepository;
 import java.util.*;
 
