@@ -28,7 +28,7 @@ public class EventViewsComponent {
         statsClient.createHit(endpointHitDto);
     }
 
-    public Map<Long, Long> getViewsOfEvents(List<Long> events){
+    public Map<Long, Long> getViewsOfEvents(List<Long> events) {
         Map<Long, Long> viewsOfEvents = new HashMap<>();
         List<ViewStatsDto> viesStats;
 
