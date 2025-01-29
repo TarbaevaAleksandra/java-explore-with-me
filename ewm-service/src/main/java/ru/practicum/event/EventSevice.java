@@ -133,14 +133,14 @@ public class EventSevice {
     }
 
     @Transactional(readOnly = true)
-    List<ParticipationRequestDto> findRequestsOnEvent(Long userId, Long eventId){
+    List<ParticipationRequestDto> findRequestsOnEvent(Long userId, Long eventId) {
         User user = usersRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Пользователь не найден"));
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Событие не найдено"));
         List<Request> eventRequests = requestRepository.findAllByEventId(eventId);
         return eventRequests.stream().map(RequestMapper::fromModelToDto).toList();
-    };
+    }
 
     @Transactional
     public EventRequestStatusUpdateResult updateStatusOfRequest(Long userId, Long eventId,
