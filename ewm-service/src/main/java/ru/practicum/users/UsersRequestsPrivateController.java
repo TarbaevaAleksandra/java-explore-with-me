@@ -3,6 +3,7 @@ package ru.practicum.users;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.ParticipationRequestDto;
 import java.util.List;
@@ -16,18 +17,20 @@ public class UsersRequestsPrivateController {
     private final UserService userService;
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     public List<ParticipationRequestDto> findRequests(@PathVariable Long userId) {
         return userService.getRequests(userId);
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public ParticipationRequestDto saveRequest(@PathVariable Long userId,
-                              @RequestParam Long eventId) {
-        System.out.println("PostMApping");
+                                               @RequestParam Long eventId) {
         return userService.saveRequest(userId,eventId);
     }
 
-    @PatchMapping("/{requestId}/cansel")
+    @PatchMapping("/{requestId}/cancel")
+    @ResponseStatus(HttpStatus.OK)
     public ParticipationRequestDto canselRequest(@PathVariable Long userId,
                                                  @PathVariable Long requestId) {
         return userService.canselRequest(userId, requestId);

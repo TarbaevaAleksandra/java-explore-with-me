@@ -52,6 +52,13 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    public User findUser(Long userId) {
+         return usersRepository.findById(userId)
+                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Пользователь не найден"));
+    }
+
+    //Запросы на участие
+    @Transactional(readOnly = true)
     public List<ParticipationRequestDto> getRequests(Long userId) {
         return requestRepository.findByUserId(userId).stream()
                 .map(RequestMapper::fromModelToDto)
@@ -60,20 +67,22 @@ public class UserService {
 
     @Transactional
     public ParticipationRequestDto saveRequest(Long userId, Long eventId) {
-        System.out.println(userId + " - " + eventId);
+        LocalDateTime lcd = LocalDateTime.now();
         User user = usersRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Пользователь не найден"));
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Событие не найдено"));
-        Request request = new Request(LocalDateTime.now(),user,event,"PENDING");
+        Request request = new Request(lcd,user,event,"PENDING");
         return RequestMapper.fromModelToDto(requestRepository.save(request));
     }
 
     @Transactional
     public ParticipationRequestDto canselRequest(Long userId, Long requestId) {
-        ParticipationRequestDto requestDto = RequestMapper.fromModelToDto(
-                requestRepository.findByUserIdAndEventId(userId,requestId).getFirst());
-        requestRepository.deleteByUserIdAndEventId(userId,requestId);
-        return requestDto;
+        User user = usersRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Пользователь не найден"));
+        Request request = requestRepository.findById(requestId)
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Запрос не найден"));
+        request.setStatus("CANCELED");
+        return RequestMapper.fromModelToDto(requestRepository.save(request));
     }
 }

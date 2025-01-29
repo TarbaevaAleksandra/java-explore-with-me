@@ -27,6 +27,6 @@ public class EventsPublicController {
 
     @GetMapping("/{id}")
     public EventFullDto findById(@PathVariable Long id) {
-        return new EventFullDto();
+        return null;
     }
 }

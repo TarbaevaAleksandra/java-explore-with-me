@@ -6,6 +6,8 @@ import ru.practicum.dto.ParticipationRequestDto;
 import ru.practicum.users.model.Request;
 import ru.practicum.users.model.User;
 
+import java.time.format.DateTimeFormatter;
+
 @UtilityClass
 public class RequestMapper {
     public static User toModelFromDto(NewUserRequest newUserRequest) {
@@ -17,7 +19,7 @@ public class RequestMapper {
 
     public static ParticipationRequestDto fromModelToDto(Request request) {
         return new ParticipationRequestDto(
-                request.getCreated().toString(),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(request.getCreated()),
                 request.getId(),
                 request.getUser().getId(),
                 request.getEvent().getId(),

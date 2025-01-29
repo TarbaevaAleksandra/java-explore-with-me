@@ -27,7 +27,7 @@ public class CompilationPublicController {
 
     @GetMapping("/{compId}")
     @ResponseStatus(HttpStatus.OK)
-    public String findById(@PathVariable Long compId) {
-        return "string";
+    public CompilationDto findById(@PathVariable Long compId) {
+        return compilationService.getCompilationById(compId);
     }
 }

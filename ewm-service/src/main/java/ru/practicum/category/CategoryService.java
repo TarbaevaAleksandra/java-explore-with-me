@@ -31,8 +31,12 @@ public class CategoryService {
 
     @Transactional
     public CategoryDto updateCat(Long id, NewCategoryDto newCategoryDto) {
-        Category newCat = CategoryMapper.toModelFromDto(id,newCategoryDto);
-        return CategoryMapper.fromModelToDto(catRepository.save(newCat));
+        Category oldCat = catRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Категория не найдена"));
+        if (newCategoryDto.getName() != null)
+            oldCat.setName(newCategoryDto.getName());
+        return CategoryMapper.fromModelToDto(catRepository.save(oldCat));
     }
 
     @Transactional(readOnly = true)

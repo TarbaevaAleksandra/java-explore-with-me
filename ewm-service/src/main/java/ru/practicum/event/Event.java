@@ -3,6 +3,7 @@ package ru.practicum.event;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
+import ru.practicum.category.Category;
 import ru.practicum.dto.Location;
 import ru.practicum.users.model.User;
 
@@ -22,8 +23,9 @@ public class Event {
     private Long id;
     @Column(name = "annotation")
     private String annotation;
-    @Column(name = "category")
-    private Long category;
+    @ManyToOne
+    @JoinColumn(name = "category")
+    private Category category;
     @Column(name = "description")
     private String description;
     @Column(name = "eventDate")
@@ -38,7 +40,10 @@ public class Event {
     @Column(name = "paid")
     private Boolean paid;
     @Column(name = "participantLimit")
-    private Long participantLimit;
+    private Integer participantLimit;
+    @Column(name = "published_on")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime publishedOn;
     @Column(name = "requestModeration")
     private Boolean requestModeration;
     @Column(name = "title")
@@ -48,4 +53,30 @@ public class Event {
     private User initiator;
     @Enumerated(EnumType.STRING)
     private State state;
+
+    public Event(String annotation,
+                 Category category,
+                 String description,
+                 LocalDateTime eventDate,
+                 Location location,
+                 LocalDateTime createdOn,
+                 Boolean paid,
+                 Integer participantLimit,
+                 Boolean requestModeration,
+                 String title,
+                 User initiator,
+                 State state) {
+        this.annotation = annotation;
+        this.category = category;
+        this.description = description;
+        this.eventDate = eventDate;
+        this.location = location;
+        this.createdOn = createdOn;
+        this.paid = paid;
+        this.participantLimit = participantLimit;
+        this.requestModeration = requestModeration;
+        this.title = title;
+        this.initiator = initiator;
+        this.state = state;
+    }
 }

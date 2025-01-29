@@ -1,5 +1,12 @@
 package ru.practicum.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
 public class UpdateEventUserRequest {
     private String annotation;
     private Long category;
@@ -7,8 +14,8 @@ public class UpdateEventUserRequest {
     private String eventDate;
     private Location location;
     private Boolean paid;
-    private Long participantLimit;
+    private Integer participantLimit;
     private Boolean requestModeration;
-    private String stateAction; //Enum
+    private String stateAction;
     private String title;
 }

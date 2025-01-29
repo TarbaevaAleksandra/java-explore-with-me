@@ -20,19 +20,19 @@ public class EventsAdminController {
     private final EventSevice eventSevice;
 
     @GetMapping
-    public List<EventFullDto> findEvents(@RequestParam(required = false) List<Long> users,
+    public List<EventFullDto> findEventsWithFilter(@RequestParam(required = false) List<Long> users,
                                          @RequestParam(required = false) List<String> states,
                                          @RequestParam(required = false) List<Long> categories,
                                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
                                          @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
                                          @RequestParam(required = false, defaultValue = "0") Integer from,
                                          @RequestParam(required = false, defaultValue = "10") Integer size) {
-        return List.of();
+        return eventSevice.findEventsWithFilter(users,states,categories,rangeStart,rangeEnd,from,size);
     }
 
     @PatchMapping("/{eventId}")
     public EventFullDto updateEvent(@PathVariable Long eventId,
                                     @Valid @RequestBody UpdateEventAdminRequest updateRequest) {
-        return new EventFullDto();
+        return eventSevice.updateEventByAdmin(eventId, updateRequest);
     }
 }

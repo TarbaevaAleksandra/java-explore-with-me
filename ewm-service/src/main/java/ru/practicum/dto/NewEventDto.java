@@ -11,12 +11,12 @@ import lombok.Setter;
 @NoArgsConstructor
 public class NewEventDto {
     private String annotation;
-    private CategoryDto category;
+    private Long category;
     private String description;
     private String eventDate;
     private Location location;
     private Boolean paid;
-    private Long participantLimit;
+    private Integer participantLimit;
     private Boolean requestModeration;
     private String title;
 }

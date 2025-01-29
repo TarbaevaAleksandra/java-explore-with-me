@@ -2,10 +2,13 @@ package ru.practicum.compilation;
 
 import jakarta.persistence.*;
 import lombok.*;
+import ru.practicum.event.Event;
 import ru.practicum.users.model.User;
 
+import java.util.List;
+
 @Entity
-@Table(name = "categories")
+@Table(name = "compilations")
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -20,7 +23,15 @@ public class Compilation {
     private Boolean pinned;
     @Column(name = "title")
     private String title;
-    @ManyToOne
-    @JoinColumn(name = "initiator")
-    private User initiator;
+    @ManyToMany
+    @JoinTable(name = "compilations_of_events",
+            joinColumns = @JoinColumn(name = "id_compilation"),
+            inverseJoinColumns = @JoinColumn(name = "id_event"))
+    private List<Event> events;
+
+    public Compilation(Boolean pinned, String title, List<Event> events) {
+        this.pinned = pinned;
+        this.title = title;
+        this.events = events;
+    }
 }

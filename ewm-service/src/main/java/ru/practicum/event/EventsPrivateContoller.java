@@ -23,7 +23,7 @@ public class EventsPrivateContoller {
     public List<EventShortDto> findEvents(@PathVariable Long userId,
                                           @RequestParam(required = false, defaultValue = "0") Integer from,
                                           @RequestParam(required = false, defaultValue = "10") Integer size) {
-        return List.of();
+        return eventSevice.findEvents(userId,from,size);
     }
 
     @PostMapping
@@ -34,16 +34,18 @@ public class EventsPrivateContoller {
     }
 
     @GetMapping("/{eventId}")
-    public EventFullDto findEvent(@PathVariable Long userId,
-                                  @PathVariable Long eventId) {
-        return new EventFullDto();
+    @ResponseStatus(HttpStatus.OK)
+    public EventFullDto findUserEvent(@PathVariable Long userId,
+                                      @PathVariable Long eventId) {
+        return eventSevice.findUserEvent(userId,eventId);
     }
 
     @PatchMapping("/{eventId}")
+    @ResponseStatus(HttpStatus.OK)
     public EventFullDto updateEvent(@PathVariable Long userId,
                                     @PathVariable Long eventId,
-                                    @Valid @RequestBody UpdateEventUserRequest updateEventUserRequest) {
-        return new EventFullDto();
+                                    @Valid @RequestBody UpdateEventUserRequest updateEvent) {
+        return eventSevice.updateEvent(userId,eventId,updateEvent);
     }
 
     @GetMapping("/{eventId}/requests")
