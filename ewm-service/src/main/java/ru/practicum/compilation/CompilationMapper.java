@@ -1,14 +1,10 @@
 package ru.practicum.compilation;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.category.Category;
 import ru.practicum.dto.CompilationDto;
-import ru.practicum.dto.NewCategoryDto;
 import ru.practicum.dto.NewCompilationDto;
-import ru.practicum.dto.UpdateCompilationRequest;
 import ru.practicum.event.Event;
 import ru.practicum.event.EventMapper;
-
 import java.util.List;
 
 @UtilityClass

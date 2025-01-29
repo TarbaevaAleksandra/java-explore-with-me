@@ -69,7 +69,7 @@ public class EventSevice {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
                     "Изменить можно только отмененные события или события в состоянии ожидания модерации");
         }
-        if (eventUpdate.getEventDate() != null){
+        if (eventUpdate.getEventDate() != null) {
             LocalDateTime eventDate = LocalDateTime.parse(eventUpdate.getEventDate(),
                     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
@@ -137,7 +137,7 @@ public class EventSevice {
                 predicates.add(usersClause);
             }
             if (statesStr != null) {
-                List<State> states = statesStr.stream().map((String x)->(State.valueOf(x))).toList();
+                List<State> states = statesStr.stream().map((String x) -> (State.valueOf(x))).toList();
                 CriteriaBuilder.In<State> statesClause = criteriaBuilder.in(root.get("state"));
                 for (State state : states) {
                     statesClause.value(state);
@@ -170,7 +170,7 @@ public class EventSevice {
     public EventFullDto updateEventByAdmin(Long eventId, UpdateEventAdminRequest eventUpdate) {
         Event oldEvent = eventRepository.findById(eventId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Событие не найдено"));
-        if (eventUpdate.getEventDate() != null){
+        if (eventUpdate.getEventDate() != null) {
             LocalDateTime eventDate = LocalDateTime.parse(eventUpdate.getEventDate(),
                     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             if (eventDate.isBefore(LocalDateTime.now().plusHours(1))) {

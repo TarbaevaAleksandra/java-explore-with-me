@@ -3,8 +3,6 @@ package ru.practicum.compilation;
 import jakarta.persistence.*;
 import lombok.*;
 import ru.practicum.event.Event;
-import ru.practicum.users.model.User;
-
 import java.util.List;
 
 @Entity
