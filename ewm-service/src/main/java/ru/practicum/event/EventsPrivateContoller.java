@@ -7,7 +7,6 @@ import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.*;
-
 import java.util.List;
 
 @RestController

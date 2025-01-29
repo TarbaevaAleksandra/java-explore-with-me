@@ -9,9 +9,10 @@ import ru.practicum.users.mapper.UserMapper;
 import ru.practicum.users.model.User;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 public class EventMapper {
-    public static EventFullDto fromModelToFullDto(Event event, Long views) {
+    public static EventFullDto fromModelToFullDto(Event event, Map<Long, Long> views) {
         return new EventFullDto(
                 event.getAnnotation(),
                 CategoryMapper.fromModelToDto(event.getCategory()),
@@ -28,21 +29,21 @@ public class EventMapper {
                 event.getRequestModeration(),
                 event.getState().toString(),
                 event.getTitle(),
-                views
+                views.get(event.getId())
         );
     }
 
-    public static EventShortDto fromModelToShortDto(Event event) {
+    public static EventShortDto fromModelToShortDto(Event event, Map<Long, Long> views) {
         return new EventShortDto(
                 event.getAnnotation(),
                 null,
-                null,
+                0L,
                 event.getEventDate().toString(),
                 event.getId(),
                 null,
                 event.getPaid(),
                 event.getTitle(),
-                null
+                views.get(event.getId())
         );
     }
 

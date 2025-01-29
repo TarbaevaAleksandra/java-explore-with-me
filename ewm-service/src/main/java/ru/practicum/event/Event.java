@@ -6,7 +6,6 @@ import lombok.*;
 import ru.practicum.category.Category;
 import ru.practicum.dto.Location;
 import ru.practicum.users.model.User;
-
 import java.time.LocalDateTime;
 
 @Entity

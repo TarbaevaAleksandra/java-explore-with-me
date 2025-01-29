@@ -2,11 +2,13 @@ package ru.practicum.event;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Predicate;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @Getter
@@ -30,7 +33,9 @@ public class EventSevice {
     private final EventRepository eventRepository;
     private final UsersRepository usersRepository;
     private final CategoryRepository categoryRepository;
+    private final EventViewsComponent eventViewsComponent;
 
+    // Private: События
     @Transactional(readOnly = true)
     public List<EventShortDto> findEvents(Long userId, Integer from, Integer size) {
         User user = usersRepository.findById(userId)
@@ -38,7 +43,7 @@ public class EventSevice {
         Pageable pageable = PageRequest.of(from / size, size);
         List<EventShortDto> events = eventRepository.findEventsByUserId(userId, pageable).getContent()
                 .stream()
-                .map(EventMapper::fromModelToShortDto)
+                .map((x) -> (EventMapper.fromModelToShortDto(x,Map.of(0L,0L))))
                 .toList();
         return events;
     }
@@ -49,16 +54,17 @@ public class EventSevice {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Пользователь не найден"));
         Category category = categoryRepository.findById(newEvent.getCategory())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Категория не найдена"));
-        Event event = EventMapper.toModelFromNewDto(newEvent,category,user);
-        return EventMapper.fromModelToFullDto(eventRepository.save(event),0L);
+        Event event = eventRepository.save(EventMapper.toModelFromNewDto(newEvent,category,user));
+        Map<Long, Long> views = eventViewsComponent.getViewsOfEvents(List.of(event.getId()));
+        return EventMapper.fromModelToFullDto(event,views);
     }
 
     @Transactional(readOnly = true)
     public EventFullDto findUserEvent(Long userId, Long eventId) {
-        //List<ViewStatsDto> views = statsClient.getAll(null,null,null,null)
-        return EventMapper.fromModelToFullDto(eventRepository.findByIdAndInitiatorId(eventId,userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Событие не найдено")),
-                0L);
+        Event event = eventRepository.findByIdAndInitiatorId(eventId,userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Событие не найдено"));
+        Map<Long, Long> views = eventViewsComponent.getViewsOfEvents(List.of(event.getId()));
+        return EventMapper.fromModelToFullDto(event,views);
     }
 
     @Transactional
@@ -116,9 +122,13 @@ public class EventSevice {
                     throw new ResponseStatusException(HttpStatus.CONFLICT,"Неизвестное состояние");
             }
         }
-        return EventMapper.fromModelToFullDto(eventRepository.save(oldEvent), 0L);
+        Event event = eventRepository.save(oldEvent);
+        Map<Long, Long> views = eventViewsComponent.getViewsOfEvents(List.of(event.getId()));
+        return EventMapper.fromModelToFullDto(event, views);
     }
 
+    // Admin: События
+    @Transactional(readOnly = true)
     public List<EventFullDto> findEventsWithFilter(List<Long> users,
                                                    List<String> statesStr,
                                                    List<Long> categories,
@@ -161,8 +171,10 @@ public class EventSevice {
         }
         );
         List<Event> events = eventRepository.findAll(specification, pageable).getContent();
+        List<Long> idEvents = events.stream().map((x) -> (x.getId())).toList();
+        Map<Long, Long> views = eventViewsComponent.getViewsOfEvents(idEvents);
         return events.stream()
-                .map((x) -> (EventMapper.fromModelToFullDto(x,0L)))
+                .map((x) -> (EventMapper.fromModelToFullDto(x,views)))
                 .toList();
     }
 
@@ -224,7 +236,80 @@ public class EventSevice {
         if (eventUpdate.getTitle() != null) {
             oldEvent.setTitle(eventUpdate.getTitle());
         }
-        return EventMapper.fromModelToFullDto(eventRepository.save(oldEvent),0L);
+        Event event = eventRepository.save(oldEvent);
+        Map<Long, Long> views = eventViewsComponent.getViewsOfEvents(List.of(event.getId()));
+        return EventMapper.fromModelToFullDto(event,views);
     }
 
+    // Public: События
+    @Transactional(readOnly = true)
+    public List<EventShortDto> findEventsByPublic(String text,
+                                                  List<Long> categories,
+                                                  Boolean paid,
+                                                  LocalDateTime rangeStart,
+                                                  LocalDateTime rangeEnd,
+                                                  Boolean onlyAvailable,
+                                                  String sort,
+                                                  Integer from,
+                                                  Integer size,
+                                                  HttpServletRequest request) {
+        eventViewsComponent.saveStats("ewm-main-service",request.getRequestURI(),request.getRemoteAddr(),LocalDateTime.now());
+        Sort sortBy;
+        switch (sort) {
+            case "EVENT_DATE":
+                sortBy = Sort.by("eventDate");
+                break;
+            case "VIEWS":
+                sortBy = Sort.by("views");
+                break;
+            default:
+                sortBy = Sort.by("id");
+        }
+
+        Pageable pageable = PageRequest.of(from / size, size, sortBy);
+        Specification<Event> specification = ((root, query, criteriaBuilder) -> {
+            List<Predicate> predicates = new ArrayList<>();
+            predicates.add(criteriaBuilder.equal(root.get("state"), State.PUBLISHED));
+            if (text != null) {
+                predicates.add(criteriaBuilder.or(criteriaBuilder.like(criteriaBuilder.lower(root.get("annotation")),
+                                "%" + text.toLowerCase() + "%"),
+                        criteriaBuilder.like(criteriaBuilder.lower(root.get("description")),
+                                "%" + text.toLowerCase() + "%")));
+            }
+            if (categories != null) {
+                CriteriaBuilder.In<Long> categoriesClause = criteriaBuilder.in(root.get("category"));
+                for (Long category :categories) {
+                    categoriesClause.value(category);
+                }
+                predicates.add(categoriesClause);
+            }
+            if (paid != null) {
+                predicates.add(criteriaBuilder.equal(root.get("isPaid"), paid));
+            }
+            predicates.add(criteriaBuilder.greaterThan(root.get("eventDate"), rangeStart));
+            if (rangeEnd != null) {
+                predicates.add(criteriaBuilder.lessThan(root.get("eventDate"), rangeEnd));
+            }
+            if (onlyAvailable != null) {
+                predicates.add(criteriaBuilder.lessThan(root.get("confirmedRequests"), root.get("participantLimit")));
+            }
+            return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
+        }
+        );
+        List <Event> events = eventRepository.findAll(specification, pageable).getContent();
+        List<Long> idEvents = events.stream().map((x) -> (x.getId())).toList();
+        Map<Long, Long> views = eventViewsComponent.getViewsOfEvents(idEvents);
+        return events.stream()
+                .map((x) -> (EventMapper.fromModelToShortDto(x,views)))
+                .toList();
+    }
+
+
+    public EventFullDto findPublishedEvent(Long eventId, HttpServletRequest request) {
+        eventViewsComponent.saveStats("ewm-main-service",request.getRequestURI(),request.getRemoteAddr(),LocalDateTime.now());
+        Event event = eventRepository.findByIdAndState(eventId, State.PUBLISHED.toString())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Опубликованного события не найдено"));
+        Map<Long, Long> views = eventViewsComponent.getViewsOfEvents(List.of(event.getId()));
+        return EventMapper.fromModelToFullDto(event, views);
+    }
 }
