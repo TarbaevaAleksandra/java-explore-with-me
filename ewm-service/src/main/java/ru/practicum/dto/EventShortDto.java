@@ -10,7 +10,7 @@ import lombok.Setter;
 public class EventShortDto {
     private String annotation;
     private CategoryDto category;
-    private Long confirmedRequests;
+    private Integer confirmedRequests;
     private String eventDate;
     private Long id;
     private UserShortDto initiator;

@@ -15,10 +15,13 @@ import java.util.Map;
 
 public class EventMapper {
     public static EventFullDto fromModelToFullDto(Event event, Map<Long, Long> views) {
+        String publishedOn = "";
+        if (event.getPublishedOn() != null)
+            publishedOn = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(event.getEventDate());
         return new EventFullDto(
                 event.getAnnotation(),
                 CategoryMapper.fromModelToDto(event.getCategory()),
-                0,
+                event.getConfirmedRequests(),
                 LocalDateTime.now().toString(),
                 event.getDescription(),
                 DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(event.getEventDate()),
@@ -27,7 +30,7 @@ public class EventMapper {
                 event.getLocation(),
                 event.getPaid(),
                 event.getParticipantLimit(),
-                null,
+                publishedOn,
                 event.getRequestModeration(),
                 event.getState().toString(),
                 event.getTitle(),
@@ -38,11 +41,11 @@ public class EventMapper {
     public static EventShortDto fromModelToShortDto(Event event, Map<Long, Long> views) {
         return new EventShortDto(
                 event.getAnnotation(),
-                null,
-                0L,
-                event.getEventDate().toString(),
+                CategoryMapper.fromModelToDto(event.getCategory()),
+                event.getConfirmedRequests(),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(event.getEventDate()),
                 event.getId(),
-                null,
+                UserMapper.fromModelToShortDto(event.getInitiator()),
                 event.getPaid(),
                 event.getTitle(),
                 views.get(event.getId())
@@ -55,6 +58,7 @@ public class EventMapper {
                 category,
                 event.getDescription(),
                 LocalDateTime.parse(event.getEventDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                0,
                 event.getLocation(),
                 LocalDateTime.now(),
                 event.getPaid(),

@@ -59,6 +59,7 @@ public class Event {
                  Category category,
                  String description,
                  LocalDateTime eventDate,
+                 Integer confirmedRequests,
                  Location location,
                  LocalDateTime createdOn,
                  Boolean paid,
@@ -71,6 +72,7 @@ public class Event {
         this.category = category;
         this.description = description;
         this.eventDate = eventDate;
+        this.confirmedRequests = confirmedRequests;
         this.location = location;
         this.createdOn = createdOn;
         this.paid = paid;

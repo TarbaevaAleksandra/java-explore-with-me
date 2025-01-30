@@ -1,5 +1,6 @@
 package ru.practicum.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -19,10 +20,26 @@ public class ExceptionsHandler {
         StringWriter out = new StringWriter();
         e.printStackTrace(new PrintWriter(out));
         String stackTrace = out.toString();
-        return new ApiError(Collections.singletonList(stackTrace),
+        return new ApiError(
+                Collections.singletonList(stackTrace),
                 "Ошибка валидации параметра",
                 e.getMessage(),
                 HttpStatus.BAD_REQUEST.toString(),
+                LocalDateTime.now().toString()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+        StringWriter out = new StringWriter();
+        e.printStackTrace(new PrintWriter(out));
+        String stackTrace = out.toString();
+        return new ApiError(
+                Collections.singletonList(stackTrace),
+                "Нарушение целостности данных",
+                e.getMessage(),
+                HttpStatus.CONFLICT.toString(),
                 LocalDateTime.now().toString()
         );
     }

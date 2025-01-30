@@ -11,8 +11,11 @@ import java.util.Map;
 @UtilityClass
 public class CompilationMapper {
     public static Compilation toModelFromDto(NewCompilationDto newDto, List<Event> events) {
+        Boolean pinned = false;
+        if (newDto.getPinned() != null)
+            pinned = newDto.getPinned();
         return new Compilation(
-                newDto.getPinned(),
+                pinned,
                 newDto.getTitle(),
                 events);
     }

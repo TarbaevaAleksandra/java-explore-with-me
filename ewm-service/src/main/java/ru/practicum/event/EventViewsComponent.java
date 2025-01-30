@@ -60,8 +60,10 @@ public class EventViewsComponent {
             }
             if (!viesStats.isEmpty()) {
                 for (ViewStatsDto stat : viesStats) {
-                    viewsOfEvents.put(Long.parseLong(stat.getUri().split("/", 0)[2]),
-                            stat.getHits());
+                    if (!stat.getUri().equals("/events")) {
+                        viewsOfEvents.put(Long.parseLong(stat.getUri().split("/", 0)[2]),
+                                stat.getHits());
+                    }
                 }
             }
         }

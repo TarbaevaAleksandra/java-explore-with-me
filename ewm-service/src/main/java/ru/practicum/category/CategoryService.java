@@ -40,11 +40,7 @@ public class CategoryService {
                         "Категория не найдена"));
         if (newCategoryDto.getName() != null)
             oldCat.setName(newCategoryDto.getName());
-        try {
-            return CategoryMapper.fromModelToDto(catRepository.save(oldCat));
-        } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Нарушение уникальности имени");
-        }
+        return CategoryMapper.fromModelToDto(catRepository.save(oldCat));
     }
 
     @Transactional(readOnly = true)
