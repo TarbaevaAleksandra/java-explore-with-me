@@ -31,12 +31,10 @@ public class EventViewsComponent {
     public Map<Long, Long> getViewsOfEvents(List<Long> events) {
         Map<Long, Long> viewsOfEvents = new HashMap<>();
         List<ViewStatsDto> viesStats;
-
         List<String> uris = new ArrayList<>();
         for (Long id : events) {
             uris.add("/events/" + id);
         }
-
         ResponseEntity<Object> response = statsClient.getAll("0000-01-01 00:00:00",
                 "4000-01-01 00:00:00",
                 uris,
