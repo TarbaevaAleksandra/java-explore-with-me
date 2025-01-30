@@ -422,8 +422,8 @@ public class EventSevice {
         return new Specification<Event>() {
             @Override
             public Predicate toPredicate(Root<Event> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
-                Predicate predicateAnnotation = criteriaBuilder.like(root.get("annotation"), "%" + text + "%");
-                Predicate predicateDescription = criteriaBuilder.like(root.get("description"), "%" + text + "%");
+                Predicate predicateAnnotation = criteriaBuilder.like(criteriaBuilder.lower(root.get("annotation")), "%" + text.toLowerCase() + "%");
+                Predicate predicateDescription = criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), "%" + text.toLowerCase() + "%");
                 return criteriaBuilder.or(predicateAnnotation, predicateDescription);
             }
         };
