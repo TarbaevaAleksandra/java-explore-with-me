@@ -53,6 +53,15 @@ public class EventMapper {
     }
 
     public static Event toModelFromNewDto(NewEventDto event, Category category, User user) {
+        boolean paid = false;
+        if (event.getPaid() != null)
+            paid = event.getPaid();
+        boolean reqModeration = true;
+        if (event.getRequestModeration() != null)
+            reqModeration = event.getRequestModeration();
+        int limit = 0;
+        if (event.getParticipantLimit() != null)
+            limit = event.getParticipantLimit();
         return new Event(
                 event.getAnnotation(),
                 category,
@@ -61,9 +70,9 @@ public class EventMapper {
                 0,
                 event.getLocation(),
                 LocalDateTime.now(),
-                event.getPaid(),
-                event.getParticipantLimit(),
-                event.getRequestModeration(),
+                paid,
+                limit,
+                reqModeration,
                 event.getTitle(),
                 user,
                 State.PENDING

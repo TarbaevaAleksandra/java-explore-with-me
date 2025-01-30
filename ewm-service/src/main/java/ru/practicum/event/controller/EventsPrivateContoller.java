@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.*;
 import ru.practicum.event.EventSevice;
-
 import java.util.List;
 
 @RestController
@@ -30,7 +29,7 @@ public class EventsPrivateContoller {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto saveEvent(@PathVariable Long userId,
-                                  @RequestBody NewEventDto newEvent) {
+                                  @Valid @RequestBody NewEventDto newEvent) {
         return eventSevice.saveEvent(userId,newEvent);
     }
 

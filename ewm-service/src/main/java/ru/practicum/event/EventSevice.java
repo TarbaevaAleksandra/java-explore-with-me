@@ -59,6 +59,11 @@ public class EventSevice {
 
     @Transactional
     public EventFullDto saveEvent(Long userId, NewEventDto newEvent) {
+        LocalDateTime eventDate = LocalDateTime.parse(newEvent.getEventDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Дата и время, на которые намечено событие, не может быть раньше, чем через два часа");
+        }
         User user = usersRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Пользователь не найден"));
         Category category = categoryRepository.findById(newEvent.getCategory())
@@ -87,7 +92,7 @@ public class EventSevice {
             LocalDateTime eventDate = LocalDateTime.parse(eventUpdate.getEventDate(),
                     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             if (eventDate.isBefore(LocalDateTime.now().plusHours(2))) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT,
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "Дата и время, на которые намечено событие, не может быть раньше, чем через два часа");
             } else {
                 oldEvent.setEventDate(eventDate);
@@ -216,6 +221,7 @@ public class EventSevice {
                                                    Integer size) {
         Pageable pageable = PageRequest.of(from / size, size);
         List<Specification<Event>> specifications = new ArrayList<>();
+        specifications.add(Specification.where(null));
         if (users != null)
             specifications.add(inUsers(users));
         if (states != null)
@@ -242,7 +248,7 @@ public class EventSevice {
             LocalDateTime eventDate = LocalDateTime.parse(eventUpdate.getEventDate(),
                     DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             if (eventDate.isBefore(LocalDateTime.now().plusHours(1))) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT,
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         "До события осталось менее одного часа");
             } else {
                 oldEvent.setEventDate(eventDate);
@@ -326,14 +332,20 @@ public class EventSevice {
         Pageable pageable = PageRequest.of(from / size, size, sortBy);
         //настройка условий поиска
         List<Specification<Event>> specifications = new ArrayList<>();
+        specifications.add(Specification.where(null));
         if (text != null)
             specifications.add(annotationOrDescriptionLike(text));
         if (categories != null)
             specifications.add(inCategories(categories));
         if (paid != null)
             specifications.add(equalsPaid(paid));
+        if (rangeStart != null && rangeEnd != null && rangeStart.isAfter(rangeEnd)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"Данные начального и конечного времени заданы неправильно");
+        }
         if (rangeStart != null)
             specifications.add(eventDateGreaterThan(rangeStart));
+        else
+            specifications.add(eventDateGreaterThan(LocalDateTime.now()));
         if (rangeEnd != null)
             specifications.add(eventDateLessThan(rangeEnd));
         if (onlyAvailable != null && onlyAvailable.equals(true))

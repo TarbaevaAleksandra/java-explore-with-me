@@ -42,9 +42,6 @@ public class EventViewsComponent {
                 uris,
                 true);
 
-        System.out.println(response.getBody());
-        System.out.println();
-
         Object body = response.getBody();
         if (body != null) {
             String json = gson.toJson(body);

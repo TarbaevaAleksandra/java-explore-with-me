@@ -79,7 +79,7 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Событие не найдено"));
         if (!event.getState().equals(State.PUBLISHED))
             throw new DataIntegrityViolationException("Событие не в статусе ожидания");
-        if (event.getConfirmedRequests() >= event.getParticipantLimit())
+        if (event.getParticipantLimit() != 0 && event.getParticipantLimit().equals(event.getConfirmedRequests()))
             throw new DataIntegrityViolationException("Исчерпан лимит");
         //проверка пользователя
         User user = usersRepository.findById(userId)
