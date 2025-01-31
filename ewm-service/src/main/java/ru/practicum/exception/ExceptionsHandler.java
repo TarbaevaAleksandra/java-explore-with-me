@@ -43,19 +43,4 @@ public class ExceptionsHandler {
                 LocalDateTime.now().toString()
         );
     }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ApiError handleUnknownException(Throwable e) {
-        StringWriter out = new StringWriter();
-        e.printStackTrace(new PrintWriter(out));
-        String stackTrace = out.toString();
-        return new ApiError(
-                Collections.singletonList(stackTrace),
-                "Непредвиденная ошибка",
-                e.getMessage(),
-                HttpStatus.INTERNAL_SERVER_ERROR.toString(),
-                LocalDateTime.now().toString()
-        );
-    }
 }

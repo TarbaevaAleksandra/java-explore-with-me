@@ -299,7 +299,7 @@ public class EventSevice {
             oldEvent.setTitle(eventUpdate.getTitle());
         }
         Event event = eventRepository.save(oldEvent);
-        Map<Long, Long> views = Map.of(0L,0L);
+        Map<Long, Long> views = eventViewsComponent.getViewsOfEvents(List.of(event.getId())); //Map.of(0L,0L);
         return EventMapper.fromModelToFullDto(event,views);
     }
 
