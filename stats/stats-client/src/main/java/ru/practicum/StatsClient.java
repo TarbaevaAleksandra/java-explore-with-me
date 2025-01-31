@@ -28,12 +28,15 @@ public class StatsClient extends BaseClient {
     }
 
     public ResponseEntity<Object> getAll(String start, String end, List<String> uris, Boolean unique) {
+        StringBuilder urisAll = new StringBuilder();
+        for (String uri : uris) {
+            urisAll.append("&uris=").append(uri);
+        }
         Map<String, Object> parameters = Map.of(
                 "start", start,
                 "end", end,
-                "uris", uris,
                 "unique", unique
         );
-        return get("/stats", null, parameters);
+        return get("/stats?start={start}&end={end}" + urisAll + "&unique={unique}",null,parameters);
     }
 }
