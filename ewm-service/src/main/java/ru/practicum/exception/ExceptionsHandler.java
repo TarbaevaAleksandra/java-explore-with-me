@@ -3,6 +3,7 @@ package ru.practicum.exception;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -86,6 +87,36 @@ public class ExceptionsHandler {
                 e.getMessage(),
                 "Запрос составлен некорректно",
                 HttpStatus.BAD_REQUEST.toString(),
+                LocalDateTime.now().toString()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleMissingServletRequestParameterException(MissingServletRequestParameterException e) {
+        StringWriter out = new StringWriter();
+        e.printStackTrace(new PrintWriter(out));
+        String stackTrace = out.toString();
+        return new ApiError(
+                Collections.singletonList(stackTrace),
+                e.getMessage(),
+                "Отстутсвует обязательный параметр запроса",
+                HttpStatus.BAD_REQUEST.toString(),
+                LocalDateTime.now().toString()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ApiError handleUnknownException(Throwable e) {
+        StringWriter out = new StringWriter();
+        e.printStackTrace(new PrintWriter(out));
+        String stackTrace = out.toString();
+        return new ApiError(
+                Collections.singletonList(stackTrace),
+                e.getMessage(),
+                "Необрабатываемая ошибка",
+                HttpStatus.INTERNAL_SERVER_ERROR.toString(),
                 LocalDateTime.now().toString()
         );
     }

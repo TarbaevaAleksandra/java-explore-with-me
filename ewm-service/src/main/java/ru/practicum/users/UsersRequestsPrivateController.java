@@ -1,5 +1,6 @@
 package ru.practicum.users;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class UsersRequestsPrivateController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ParticipationRequestDto saveRequest(@PathVariable Long userId,
-                                               @RequestParam Long eventId) {
+                                               @NotNull @RequestParam Long eventId) {
         return userService.saveRequest(userId,eventId);
     }
 
