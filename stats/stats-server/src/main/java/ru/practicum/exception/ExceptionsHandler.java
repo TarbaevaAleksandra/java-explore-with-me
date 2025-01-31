@@ -11,7 +11,7 @@ import java.util.Map;
 public class ExceptionsHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public Map<String, String> handleStatsException(StatsException e) {
         return Map.of("Ошибка валидации данных", e.getMessage());
     }
 }
