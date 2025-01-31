@@ -1,14 +1,13 @@
 package ru.practicum;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.dto.ViewStatsDto;
+import ru.practicum.exception.StatsException;
 import ru.practicum.mapper.EndpointHitMapper;
 import ru.practicum.mapper.ViewStatsMapper;
 import ru.practicum.model.EndpointHit;
@@ -18,8 +17,6 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-@Getter
-@Setter
 public class StatsService {
     private final EndpointHitRepository endpointHitRepository;
 
@@ -32,7 +29,7 @@ public class StatsService {
     @Transactional(readOnly = true)
     public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, Boolean unique) {
         if (start.isAfter(end)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Начало промежутка позже окончания");
+            throw new StatsException("Начало промежутка позже окончания");
         }
         if (uris == null)
             uris = List.of("0");

@@ -1,5 +1,6 @@
 package ru.practicum.event;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.category.Category;
 import ru.practicum.category.CategoryMapper;
 import ru.practicum.dto.EventFullDto;
@@ -10,21 +11,24 @@ import ru.practicum.event.model.State;
 import ru.practicum.users.mapper.UserMapper;
 import ru.practicum.users.model.User;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
+import static ru.practicum.ConstantDateTime.FORMATTER;
+
+@UtilityClass
 public class EventMapper {
+
     public static EventFullDto fromModelToFullDto(Event event, Map<Long, Long> views) {
         String publishedOn = "";
         if (event.getPublishedOn() != null)
-            publishedOn = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(event.getEventDate());
+            publishedOn = FORMATTER.format(event.getEventDate());
         return new EventFullDto(
                 event.getAnnotation(),
                 CategoryMapper.fromModelToDto(event.getCategory()),
                 event.getConfirmedRequests(),
                 LocalDateTime.now().toString(),
                 event.getDescription(),
-                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(event.getEventDate()),
+                FORMATTER.format(event.getEventDate()),
                 event.getId(),
                 UserMapper.fromModelToShortDto(event.getInitiator()),
                 event.getLocation(),
@@ -43,7 +47,7 @@ public class EventMapper {
                 event.getAnnotation(),
                 CategoryMapper.fromModelToDto(event.getCategory()),
                 event.getConfirmedRequests(),
-                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").format(event.getEventDate()),
+                FORMATTER.format(event.getEventDate()),
                 event.getId(),
                 UserMapper.fromModelToShortDto(event.getInitiator()),
                 event.getPaid(),
@@ -62,20 +66,20 @@ public class EventMapper {
         int limit = 0;
         if (event.getParticipantLimit() != null)
             limit = event.getParticipantLimit();
-        return new Event(
-                event.getAnnotation(),
-                category,
-                event.getDescription(),
-                LocalDateTime.parse(event.getEventDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                0,
-                event.getLocation(),
-                LocalDateTime.now(),
-                paid,
-                limit,
-                reqModeration,
-                event.getTitle(),
-                user,
-                State.PENDING
-        );
+       return Event.builder()
+               .annotation(event.getAnnotation())
+               .category(category)
+               .description(event.getDescription())
+               .eventDate(LocalDateTime.parse(event.getEventDate(), FORMATTER))
+               .confirmedRequests(0)
+               .location(event.getLocation())
+               .createdOn(LocalDateTime.now())
+               .paid(paid)
+               .participantLimit(limit)
+               .requestModeration(reqModeration)
+               .title(event.getTitle())
+               .initiator(user)
+               .state(State.PENDING)
+               .build();
     }
 }

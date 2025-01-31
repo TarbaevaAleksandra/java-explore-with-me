@@ -2,8 +2,6 @@ package ru.practicum.compilation;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.CompilationDto;
@@ -12,10 +10,8 @@ import ru.practicum.dto.UpdateCompilationRequest;
 
 @RestController
 @RequestMapping("/admin/compilations")
-@Getter
-@Setter
 @AllArgsConstructor
-public class ComplicationAdminController {
+public class CompilationAdminController {
     private final CompilationService compilationService;
 
     @PostMapping

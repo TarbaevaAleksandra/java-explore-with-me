@@ -1,19 +1,16 @@
 package ru.practicum.users;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.dto.NewUserRequest;
 import ru.practicum.dto.ParticipationRequestDto;
 import ru.practicum.dto.UserDto;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.EventRepository;
 import ru.practicum.event.model.State;
+import ru.practicum.exception.DataNotFoundException;
 import ru.practicum.users.mapper.RequestMapper;
 import ru.practicum.users.mapper.UserMapper;
 import ru.practicum.users.model.Request;
@@ -26,8 +23,6 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
-@Getter
-@Setter
 public class UserService {
     private final UsersRepository usersRepository;
     private final RequestRepository requestRepository;
@@ -57,7 +52,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public User findUser(Long userId) {
          return usersRepository.findById(userId)
-                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Пользователь не найден"));
+                 .orElseThrow(() -> new DataNotFoundException("Пользователь не найден"));
     }
 
     //Запросы на участие
@@ -76,14 +71,14 @@ public class UserService {
             throw new DataIntegrityViolationException("Данный запрос уже существует");
         //проверка события
         Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Событие не найдено"));
+                .orElseThrow(() -> new DataNotFoundException("Событие не найдено"));
         if (!event.getState().equals(State.PUBLISHED))
             throw new DataIntegrityViolationException("Событие не в статусе ожидания");
         if (event.getParticipantLimit() != 0 && event.getParticipantLimit().equals(event.getConfirmedRequests()))
             throw new DataIntegrityViolationException("Исчерпан лимит");
         //проверка пользователя
         User user = usersRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Пользователь не найден"));
+                .orElseThrow(() -> new DataNotFoundException("Пользователь не найден"));
         if (userId.equals(event.getInitiator().getId()))
             throw new DataIntegrityViolationException("Инициатор события не может быть участником");
         //сохранение запроса
@@ -100,9 +95,9 @@ public class UserService {
     @Transactional
     public ParticipationRequestDto canselRequest(Long userId, Long requestId) {
         User user = usersRepository.findById(userId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Пользователь не найден"));
+                .orElseThrow(() -> new DataNotFoundException("Пользователь не найден"));
         Request request = requestRepository.findById(requestId)
-                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Запрос не найден"));
+                        .orElseThrow(() -> new DataNotFoundException("Запрос не найден"));
         request.setStatus("CANCELED");
         return RequestMapper.fromModelToDto(requestRepository.save(request));
     }

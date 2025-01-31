@@ -5,11 +5,10 @@ import lombok.*;
 
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class User {
     @Id
     @Column(name = "id")
@@ -19,9 +18,4 @@ public class User {
     private String name;
     @Column(name = "email")
     private String email;
-
-    public User(String email, String name) {
-        this.email = email;
-        this.name = name;
-    }
 }

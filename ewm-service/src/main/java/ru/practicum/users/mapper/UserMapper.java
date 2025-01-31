@@ -9,10 +9,10 @@ import ru.practicum.users.model.User;
 @UtilityClass
 public class UserMapper {
     public static User toModelFromDto(NewUserRequest newUserRequest) {
-        return new User(
-                newUserRequest.getEmail(),
-                newUserRequest.getName()
-        );
+        return User.builder()
+                .email(newUserRequest.getEmail())
+                .name(newUserRequest.getName())
+                .build();
     }
 
     public static UserDto fromModelToDto(User user) {

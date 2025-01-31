@@ -2,25 +2,20 @@ package ru.practicum.event.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.EventFullDto;
 import ru.practicum.dto.EventShortDto;
-import ru.practicum.event.EventSevice;
-
+import ru.practicum.event.EventService;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/events")
-@Getter
-@Setter
 @AllArgsConstructor
 public class EventsPublicController {
-    private final EventSevice eventSevice;
+    private final EventService eventService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -34,12 +29,12 @@ public class EventsPublicController {
                                       @RequestParam(required = false, defaultValue = "0") Integer from,
                                       @RequestParam(required = false, defaultValue = "10") Integer size,
                                       HttpServletRequest request) {
-        return eventSevice.findEventsByPublic(text,categories,paid,rangeStart,rangeEnd,onlyAvailable,sort,from,size,request);
+        return eventService.findEventsByPublic(text,categories,paid,rangeStart,rangeEnd,onlyAvailable,sort,from,size,request);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public EventFullDto findById(@PathVariable Long id,HttpServletRequest request) {
-        return eventSevice.findPublishedEvent(id,request);
+        return eventService.findPublishedEvent(id,request);
     }
 }

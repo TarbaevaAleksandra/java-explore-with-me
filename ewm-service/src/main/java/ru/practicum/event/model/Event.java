@@ -10,11 +10,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "events")
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Event {
     @Id
     @Column(name = "id")
@@ -27,25 +26,25 @@ public class Event {
     private Category category;
     @Column(name = "description")
     private String description;
-    @Column(name = "eventDate")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "event_date")
     private LocalDateTime eventDate;
     @Column(name = "confirmed_requests")
     private Integer confirmedRequests;
-    @Column(name = "created_on")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "created_on")
     private LocalDateTime createdOn;
     @Embedded
     @Column(name = "location")
     private Location location;
     @Column(name = "paid")
     private Boolean paid;
-    @Column(name = "participantLimit")
+    @Column(name = "participant_limit")
     private Integer participantLimit;
-    @Column(name = "published_on")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "published_on")
     private LocalDateTime publishedOn;
-    @Column(name = "requestModeration")
+    @Column(name = "request_moderation")
     private Boolean requestModeration;
     @Column(name = "title")
     private String title;
@@ -54,32 +53,4 @@ public class Event {
     private User initiator;
     @Enumerated(EnumType.STRING)
     private State state;
-
-    public Event(String annotation,
-                 Category category,
-                 String description,
-                 LocalDateTime eventDate,
-                 Integer confirmedRequests,
-                 Location location,
-                 LocalDateTime createdOn,
-                 Boolean paid,
-                 Integer participantLimit,
-                 Boolean requestModeration,
-                 String title,
-                 User initiator,
-                 State state) {
-        this.annotation = annotation;
-        this.category = category;
-        this.description = description;
-        this.eventDate = eventDate;
-        this.confirmedRequests = confirmedRequests;
-        this.location = location;
-        this.createdOn = createdOn;
-        this.paid = paid;
-        this.participantLimit = participantLimit;
-        this.requestModeration = requestModeration;
-        this.title = title;
-        this.initiator = initiator;
-        this.state = state;
-    }
 }

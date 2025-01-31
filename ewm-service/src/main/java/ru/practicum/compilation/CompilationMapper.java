@@ -5,19 +5,17 @@ import ru.practicum.dto.CompilationDto;
 import ru.practicum.dto.NewCompilationDto;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.EventMapper;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @UtilityClass
 public class CompilationMapper {
-    public static Compilation toModelFromDto(NewCompilationDto newDto, List<Event> events) {
-        Boolean pinned = false;
-        if (newDto.getPinned() != null)
-            pinned = newDto.getPinned();
-        return new Compilation(
-                pinned,
-                newDto.getTitle(),
-                events);
+    public static Compilation toModelFromDto(NewCompilationDto newDto, Set<Event> events) {
+        return Compilation.builder()
+                .pinned(newDto.isPinned())
+                .title(newDto.getTitle())
+                .events(events)
+                .build();
     }
 
     public static CompilationDto fromModelToDto(Compilation compilation) {
@@ -26,7 +24,7 @@ public class CompilationMapper {
                         .map((x) -> (EventMapper.fromModelToShortDto(x, Map.of(0L,0L))))
                         .toList(),
                 compilation.getId(),
-                compilation.getPinned(),
+                compilation.isPinned(),
                 compilation.getTitle()
         );
     }

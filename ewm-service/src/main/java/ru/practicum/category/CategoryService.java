@@ -1,19 +1,15 @@
 package ru.practicum.category;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.dto.CategoryDto;
 import ru.practicum.dto.NewCategoryDto;
+import ru.practicum.exception.DataConflictException;
+import ru.practicum.exception.DataNotFoundException;
 import java.util.List;
 
 @Service
-@Getter
-@Setter
 @AllArgsConstructor
 public class CategoryService {
     private final CategoryRepository catRepository;
@@ -24,7 +20,7 @@ public class CategoryService {
         try {
             return CategoryMapper.fromModelToDto(catRepository.save(newCat));
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Нарушение уникальности имени");
+            throw new DataConflictException("Нарушение уникальности имени");
         }
     }
 
@@ -36,8 +32,7 @@ public class CategoryService {
     @Transactional
     public CategoryDto updateCat(Long id, NewCategoryDto newCategoryDto) {
         Category oldCat = catRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Категория не найдена"));
+                .orElseThrow(() -> new DataNotFoundException("Категория не найдена"));
         if (newCategoryDto.getName() != null)
             oldCat.setName(newCategoryDto.getName());
         return CategoryMapper.fromModelToDto(catRepository.save(oldCat));
@@ -54,6 +49,6 @@ public class CategoryService {
     @Transactional(readOnly = true)
     public CategoryDto findCatById(Long id) {
         return CategoryMapper.fromModelToDto(catRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Категория не найдена")));
+                .orElseThrow(() -> new DataNotFoundException("Категория не найдена")));
     }
 }

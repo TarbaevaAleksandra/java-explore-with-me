@@ -2,8 +2,6 @@ package ru.practicum.users;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.NewUserRequest;
@@ -14,8 +12,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin/users")
 @AllArgsConstructor
-@Getter
-@Setter
 public class UserAdminController {
     private final UserService userService;
 

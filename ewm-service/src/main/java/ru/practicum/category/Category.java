@@ -5,9 +5,8 @@ import lombok.*;
 
 @Entity
 @Table(name = "categories")
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Category {
@@ -17,8 +16,4 @@ public class Category {
     private Long id;
     @Column(name = "name")
     private String name;
-
-    public Category(String name) {
-        this.name = name;
-    }
 }

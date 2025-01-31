@@ -1,22 +1,17 @@
 package ru.practicum.compilation;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.dto.*;
 import ru.practicum.event.model.Event;
 import ru.practicum.event.EventRepository;
+import ru.practicum.exception.DataNotFoundException;
 import java.util.*;
 
 @Service
-@Getter
-@Setter
 @AllArgsConstructor
 public class CompilationService {
     private final CompilationRepository compilationRepository;
@@ -24,11 +19,11 @@ public class CompilationService {
 
     @Transactional
     public CompilationDto saveCompilation(NewCompilationDto compilation) {
-        List<Event> events;
+        Set<Event> events;
         if (compilation.getEvents() != null) {
-            events = eventRepository.findAllByIdIn(compilation.getEvents());
+            events = new HashSet<Event>(eventRepository.findAllByIdIn(compilation.getEvents()));
         } else {
-            events = new ArrayList<>();
+            events = new HashSet<>();
         }
         Compilation newCompilation = CompilationMapper.toModelFromDto(compilation,events);
         return CompilationMapper.fromModelToDto(compilationRepository.save(newCompilation));
@@ -42,9 +37,9 @@ public class CompilationService {
     @Transactional
     public CompilationDto updateCompilation(Long compId, UpdateCompilationRequest compilation) {
         Compilation oldCompilation = compilationRepository.findById(compId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Подборка не найдена"));
+                .orElseThrow(() -> new DataNotFoundException("Подборка не найдена"));
         if (compilation.getEvents() != null && !compilation.getEvents().isEmpty()) {
-            List<Event> events = eventRepository.findAllByIdIn(compilation.getEvents());
+            Set<Event> events = new HashSet<Event>(eventRepository.findAllByIdIn(compilation.getEvents()));
             oldCompilation.setEvents(events);
         }
         if (compilation.getPinned() != null) {
@@ -70,7 +65,7 @@ public class CompilationService {
     @Transactional(readOnly = true)
     public CompilationDto getCompilationById(Long compId) {
         Compilation compilation = compilationRepository.findById(compId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Подборка не найдена"));
+                .orElseThrow(() -> new DataNotFoundException("Подборка не найдена"));
         return CompilationMapper.fromModelToDto(compilation);
     }
 }

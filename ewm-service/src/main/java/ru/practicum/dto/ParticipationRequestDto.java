@@ -2,9 +2,7 @@ package ru.practicum.dto;
 
 import lombok.*;
 
-@Getter
-@Setter
-@EqualsAndHashCode
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ParticipationRequestDto {

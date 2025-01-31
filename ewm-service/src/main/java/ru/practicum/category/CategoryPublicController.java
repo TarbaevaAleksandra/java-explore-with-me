@@ -1,14 +1,10 @@
 package ru.practicum.category;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.CategoryDto;
 import java.util.List;
 
-@Getter
-@Setter
 @AllArgsConstructor
 @RestController
 @RequestMapping("/categories")

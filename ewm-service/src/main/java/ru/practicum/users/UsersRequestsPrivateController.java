@@ -1,8 +1,6 @@
 package ru.practicum.users;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dto.ParticipationRequestDto;
@@ -10,8 +8,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/users/{userId}/requests")
-@Getter
-@Setter
 @AllArgsConstructor
 public class UsersRequestsPrivateController {
     private final UserService userService;

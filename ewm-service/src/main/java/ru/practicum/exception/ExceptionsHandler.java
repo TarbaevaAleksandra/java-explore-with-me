@@ -14,6 +14,7 @@ import java.util.Collections;
 
 @RestControllerAdvice
 public class ExceptionsHandler {
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
@@ -37,9 +38,54 @@ public class ExceptionsHandler {
         String stackTrace = out.toString();
         return new ApiError(
                 Collections.singletonList(stackTrace),
-                "Нарушение целостности данных",
                 e.getMessage(),
+                "Нарушение целостности данных",
                 HttpStatus.CONFLICT.toString(),
+                LocalDateTime.now().toString()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiError handleDataNotFoundException(DataNotFoundException e) {
+        StringWriter out = new StringWriter();
+        e.printStackTrace(new PrintWriter(out));
+        String stackTrace = out.toString();
+        return new ApiError(
+                Collections.singletonList(stackTrace),
+                e.getMessage(),
+                "Данные не найдены",
+                HttpStatus.NOT_FOUND.toString(),
+                LocalDateTime.now().toString()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleDataConflictException(DataConflictException e) {
+        StringWriter out = new StringWriter();
+        e.printStackTrace(new PrintWriter(out));
+        String stackTrace = out.toString();
+        return new ApiError(
+                Collections.singletonList(stackTrace),
+                e.getMessage(),
+                "Данные не удовлетворяют правилам",
+                HttpStatus.CONFLICT.toString(),
+                LocalDateTime.now().toString()
+        );
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleDataBadRequestException(DataBadRequestException e) {
+        StringWriter out = new StringWriter();
+        e.printStackTrace(new PrintWriter(out));
+        String stackTrace = out.toString();
+        return new ApiError(
+                Collections.singletonList(stackTrace),
+                e.getMessage(),
+                "Запрос составлен некорректно",
+                HttpStatus.BAD_REQUEST.toString(),
                 LocalDateTime.now().toString()
         );
     }
