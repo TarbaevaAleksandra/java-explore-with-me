@@ -1,11 +1,17 @@
 package ru.practicum.rating;
 
 import jakarta.persistence.*;
+import lombok.*;
 import ru.practicum.event.model.Event;
 import ru.practicum.users.model.User;
 
 @Entity
-@Table(name = "rating")
+@Table(name = "ratings")
+@Builder
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Rating {
     @Id
     @Column(name = "id")

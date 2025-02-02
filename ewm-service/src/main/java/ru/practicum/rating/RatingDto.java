@@ -1,10 +1,10 @@
 package ru.practicum.rating;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import ru.practicum.dto.EventShortDto;
+import ru.practicum.dto.UserShortDto;
 
 public class RatingDto {
-    @Min(1)
-    @Max(5)
+    private UserShortDto user;
+    private EventShortDto event;
     private Integer rating;
 }
