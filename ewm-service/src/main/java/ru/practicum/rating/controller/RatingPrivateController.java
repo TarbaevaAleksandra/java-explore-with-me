@@ -1,10 +1,13 @@
-package ru.practicum.rating;
+package ru.practicum.rating.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.rating.dto.NewRatingDto;
+import ru.practicum.rating.Rating;
+import ru.practicum.rating.RatingService;
 
 @RestController
 @RequestMapping("/users/{userId}/rating")
@@ -23,8 +26,8 @@ public class RatingPrivateController {
     @PatchMapping
     @ResponseStatus(HttpStatus.OK)
     public Rating updateRating(@Valid @RequestBody NewRatingDto newRating,
-                             @PathVariable Long userId,
-                             @NotNull @RequestParam Long eventId) {
+                               @PathVariable Long userId,
+                               @NotNull @RequestParam Long eventId) {
         return ratingService.updateRating(newRating,userId,eventId);
     }
 
