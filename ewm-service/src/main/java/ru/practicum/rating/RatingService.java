@@ -18,8 +18,6 @@ import ru.practicum.users.model.Request;
 import ru.practicum.users.model.User;
 import ru.practicum.users.repository.RequestRepository;
 import ru.practicum.users.repository.UsersRepository;
-
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,9 +44,6 @@ public class RatingService {
                 .orElseThrow(() -> new DataNotFoundException("Событие не найдено"));
         if (event.getInitiator().getId().equals(userId))
             throw new DataConflictException("Инициатор события не может выставлять рейтинг своему событию");
-        /*System.out.println(event.getEventDate() + " is After " + LocalDateTime.now());
-        if (event.getEventDate().isAfter(LocalDateTime.now()))
-            throw new DataNotFoundException("Событие еще не произошло");*/
         if (!event.getState().equals(State.PUBLISHED))
             throw new DataNotFoundException("Событие не опубликовано");
         //проверка подтвержденного участия в событии
@@ -98,7 +93,6 @@ public class RatingService {
 
     @Transactional(readOnly = true)
     public List<EventRatingDto> findEventsWithRating(String sort, Integer from, Integer size) {
-
         Sort sortBy = Sort.by("avg_rating").descending();
         int nullRating = 0; //параметр для правильной сортировки - события без рейтинга идут в конце
         if (sort.equals("asc")) {
