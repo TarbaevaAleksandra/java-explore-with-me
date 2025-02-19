@@ -91,31 +91,16 @@ public class EventService {
                 oldEvent.setEventDate(eventDate);
             }
         }
-        if (eventUpdate.getAnnotation() != null) {
-            oldEvent.setAnnotation(eventUpdate.getAnnotation());
-        }
-        if (eventUpdate.getCategory() != null) {
-            oldEvent.setCategory(categoryRepository.findById(eventUpdate.getCategory())
-                    .orElseThrow(() -> new DataNotFoundException("Категория не найдена")));
-        }
-        if (eventUpdate.getDescription() != null) {
-            oldEvent.setDescription(eventUpdate.getDescription());
-        }
-        if (eventUpdate.getLocation() != null) {
-            oldEvent.setLocation(eventUpdate.getLocation());
-        }
-        if (eventUpdate.getPaid() != null) {
-            oldEvent.setPaid(eventUpdate.getPaid());
-        }
-        if (eventUpdate.getParticipantLimit() != null) {
-            oldEvent.setParticipantLimit(eventUpdate.getParticipantLimit());
-        }
-        if (eventUpdate.getRequestModeration() != null) {
-            oldEvent.setRequestModeration(eventUpdate.getRequestModeration());
-        }
-        if (eventUpdate.getTitle() != null) {
-            oldEvent.setTitle(eventUpdate.getTitle());
-        }
+        changeFieldsOfOldEvent(oldEvent,
+                eventUpdate.getAnnotation(),
+                eventUpdate.getCategory(),
+                eventUpdate.getDescription(),
+                eventUpdate.getLocation(),
+                eventUpdate.getPaid(),
+                eventUpdate.getParticipantLimit(),
+                eventUpdate.getRequestModeration(),
+                eventUpdate.getTitle()
+        );
         if (eventUpdate.getStateAction() != null) {
             switch (eventUpdate.getStateAction()) {
                 case "SEND_TO_REVIEW":
@@ -262,32 +247,16 @@ public class EventService {
                     throw new DataNotFoundException("Неизвестный параметр состояния события");
             }
         }
-
-        if (eventUpdate.getAnnotation() != null) {
-            oldEvent.setAnnotation(eventUpdate.getAnnotation());
-        }
-        if (eventUpdate.getCategory() != null) {
-            oldEvent.setCategory(categoryRepository.findById(eventUpdate.getCategory())
-                    .orElseThrow(() -> new DataNotFoundException("Категория не найдена")));
-        }
-        if (eventUpdate.getDescription() != null) {
-            oldEvent.setDescription(eventUpdate.getDescription());
-        }
-        if (eventUpdate.getLocation() != null) {
-            oldEvent.setLocation(eventUpdate.getLocation());
-        }
-        if (eventUpdate.getPaid() != null) {
-            oldEvent.setPaid(eventUpdate.getPaid());
-        }
-        if (eventUpdate.getParticipantLimit() != null) {
-            oldEvent.setParticipantLimit(eventUpdate.getParticipantLimit());
-        }
-        if (eventUpdate.getRequestModeration() != null) {
-            oldEvent.setRequestModeration(eventUpdate.getRequestModeration());
-        }
-        if (eventUpdate.getTitle() != null) {
-            oldEvent.setTitle(eventUpdate.getTitle());
-        }
+        changeFieldsOfOldEvent(oldEvent,
+                eventUpdate.getAnnotation(),
+                eventUpdate.getCategory(),
+                eventUpdate.getDescription(),
+                eventUpdate.getLocation(),
+                eventUpdate.getPaid(),
+                eventUpdate.getParticipantLimit(),
+                eventUpdate.getRequestModeration(),
+                eventUpdate.getTitle()
+        );
         Event event = eventRepository.save(oldEvent);
         Map<Long, Long> views = eventViewsComponent.getViewsOfEvents(List.of(event.getId())); //Map.of(0L,0L);
         return EventMapper.fromModelToFullDto(event,views);
@@ -436,5 +405,33 @@ public class EventService {
                 return criteriaBuilder.lessThan(root.get("confirmed_requests"), root.get("participant_limit"));
             }
         };
+    }
+
+    private void changeFieldsOfOldEvent(Event oldEvent,
+                                        String annotation,
+                                        Long category,
+                                        String description,
+                                        Location location,
+                                        Boolean paid,
+                                        Integer limit,
+                                        Boolean requestModeration,
+                                        String title) {
+        if (annotation != null)
+            oldEvent.setAnnotation(annotation);
+        if (category != null)
+            oldEvent.setCategory(categoryRepository.findById(category)
+                    .orElseThrow(() -> new DataNotFoundException("Категория не найдена")));
+        if (description != null)
+            oldEvent.setDescription(description);
+        if (location != null)
+            oldEvent.setLocation(location);
+        if (paid != null)
+            oldEvent.setPaid(paid);
+        if (limit != null)
+            oldEvent.setParticipantLimit(limit);
+        if (requestModeration != null)
+            oldEvent.setRequestModeration(requestModeration);
+        if (title != null)
+            oldEvent.setTitle(title);
     }
 }
