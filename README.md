@@ -20,7 +20,7 @@
 ### 🖥️ Запуск:
 1. Склонируйте репозиторий:
    ```sh
-   https://github.com/BersenevaAV/java-explore-with-me.git
+   https://github.com/TarbaevaAleksandra/java-explore-with-me.git
    ```
 2. Откройте проект в IntelliJ IDEA;
 3. Запустите проект на устройстве - сначала модуль stats, затем модуль ewm-service;
